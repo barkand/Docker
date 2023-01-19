@@ -1,0 +1,18 @@
+version: "3.9"
+
+networks:
+  network:
+
+services:
+  app-server:
+    container_name: app-server
+    image: ${IMAGE_NAME}
+    build: ../../server
+    command: npm run start
+    restart: always
+    ports:
+      - ${APP_PORT}:4000
+    volumes:
+      - ./log:/var/log
+    networks:
+      - network

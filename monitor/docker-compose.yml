@@ -1,0 +1,43 @@
+version: "3.9"
+
+volumes:
+  app_data: {}
+  grafana_data: {}
+
+networks:
+  network:
+
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:${GRAFANA_VERSION}
+    ports:
+      - ${GRAFANA_PORT}:3000
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_USERS_ALLOW_ORG_CREATE=false
+      - GF_USERS_AUTO_ASSIGN_ORG_ROLE=Read Only Editor
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel,marcusolsson-gantt-panel,grafana-worldmap-panel,briangann-gauge-panel,natel-plotly-panel
+
+    volumes:
+      - ./data/logs:/var/log/grafana
+      - ./data/provisioning:/etc/grafana/provisioning
+      - ./data/plugins:/var/lib/grafana/plugins
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - network
+
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    ports:
+      - ${PROMETHEUS_PORT}:9090
+    restart: unless-stopped
+    networks:
+      - network
