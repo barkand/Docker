@@ -1,13 +1,13 @@
 version: "3.1"
 services:
   mongo:
-    image: mongo
-    container_name: mongo-${MONGO_VERSION}
+    image: mongo:${MONGO_VERSION}
+    container_name: mongo
     ports:
       - ${MONGO_PORT1}:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${USER_PASSWORD}
-      MONGO_INITDB_ROOT_PASSWORD: ${USER_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - ./mongodb/db:/data/db
     restart: always
