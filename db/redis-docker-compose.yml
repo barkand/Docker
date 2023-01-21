@@ -1,0 +1,27 @@
+version: "3"
+services:
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: redis
+    restart: always
+    ports:
+      - ${REDIS_PORT1}:6379
+    command:
+      - "redis-server"
+      - "--loglevel ${REDIS_LOGLEVEL:-warning}"
+      - "--databases 2"
+      - "--save 900 1"
+      - "--save 300 10"
+      - "--save 60 10000"
+      - "--maxmemory ${REDIS_MAXMEM:-50mb}"
+      - "--maxmemory-policy ${REDIS_POLICY:-volatile-lru}"
+      - "--requirepass ${REDIS_PASSWORD}"
+      - "--appendonly yes"
+    volumes:
+      - ./redis/db:/data
+      - ./redis/redis.conf:/usr/local/etc/redis.conf
+    networks:
+      - network
+
+networks:
+  network:
